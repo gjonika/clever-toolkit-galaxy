@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type Language = "EN" | "LT";
@@ -76,29 +77,98 @@ const translations: Translations = {
     EN: "GitHub",
     LT: "GitHub"
   },
-  "input-text": "Input Text",
-  "output-text": "Output Text",
-  "clear-all": "Clear All",
-  "copy-to-clipboard": "Copy to Clipboard",
-  "transformations": "Transformations",
-  "uppercase": "Uppercase",
-  "lowercase": "Lowercase",
-  "capitalize": "Capitalize",
-  "trim": "Trim",
-  "remove-empty-lines": "Remove Empty Lines",
-  "remove-duplicate-lines": "Remove Duplicate Lines",
-  "sort-lines": "Sort Lines",
-  "reverse-lines": "Reverse Lines",
-  "common-use-cases": "Common Use Cases",
-  "text-formatting": "Text Formatting",
-  "data-processing": "Data Processing",
-  "feels-like": "Feels like",
-  "humidity": "Humidity",
-  "wind": "Wind",
-  "search": "Search",
-  "enter-city-name": "Enter city name",
-  "hourly-forecast": "Hourly Forecast",
-  "temp": "Temp."
+  "input-text": {
+    EN: "Input Text",
+    LT: "Įvesti Tekstą"
+  },
+  "output-text": {
+    EN: "Output Text",
+    LT: "Išvesties Tekstas"
+  },
+  "clear-all": {
+    EN: "Clear All",
+    LT: "Išvalyti Viską"
+  },
+  "copy-to-clipboard": {
+    EN: "Copy to Clipboard",
+    LT: "Kopijuoti į Iškarpinę"
+  },
+  "transformations": {
+    EN: "Transformations",
+    LT: "Transformacijos"
+  },
+  "uppercase": {
+    EN: "Uppercase",
+    LT: "Didžiosios raidės"
+  },
+  "lowercase": {
+    EN: "Lowercase",
+    LT: "Mažosios raidės"
+  },
+  "capitalize": {
+    EN: "Capitalize",
+    LT: "Pirmoji didžioji"
+  },
+  "trim": {
+    EN: "Trim",
+    LT: "Apkarpyti"
+  },
+  "remove-empty-lines": {
+    EN: "Remove Empty Lines",
+    LT: "Pašalinti tuščias eilutes"
+  },
+  "remove-duplicate-lines": {
+    EN: "Remove Duplicate Lines",
+    LT: "Pašalinti pasikartojančias eilutes"
+  },
+  "sort-lines": {
+    EN: "Sort Lines",
+    LT: "Rūšiuoti eilutes"
+  },
+  "reverse-lines": {
+    EN: "Reverse Lines",
+    LT: "Atvirkštinės eilutės"
+  },
+  "common-use-cases": {
+    EN: "Common Use Cases",
+    LT: "Dažni naudojimo atvejai"
+  },
+  "text-formatting": {
+    EN: "Text Formatting",
+    LT: "Teksto formatavimas"
+  },
+  "data-processing": {
+    EN: "Data Processing",
+    LT: "Duomenų apdorojimas"
+  },
+  "feels-like": {
+    EN: "Feels like",
+    LT: "Jaučiasi kaip"
+  },
+  "humidity": {
+    EN: "Humidity",
+    LT: "Drėgmė"
+  },
+  "wind": {
+    EN: "Wind",
+    LT: "Vėjas"
+  },
+  "search": {
+    EN: "Search",
+    LT: "Paieška"
+  },
+  "enter-city-name": {
+    EN: "Enter city name",
+    LT: "Įveskite miesto pavadinimą"
+  },
+  "hourly-forecast": {
+    EN: "Hourly Forecast",
+    LT: "Valandinis orų prognozė"
+  },
+  "temp": {
+    EN: "Temp.",
+    LT: "Temp."
+  }
 };
 
 interface LanguageContextType {
