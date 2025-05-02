@@ -2,10 +2,11 @@
 import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import WeatherWidget from "@/components/weather/WeatherWidget";
 
 const Navbar = () => {
   return (
-    <div className="border-b bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm sticky top-0 z-30">
+    <div className="border-b bg-background/90 backdrop-blur-sm sticky top-0 z-30">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
@@ -31,6 +32,8 @@ const Navbar = () => {
               Text Transformer
             </Link>
           </nav>
+          
+          <WeatherWidget />
           
           <a href="https://github.com/your-username/dev-utils" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" size="sm">GitHub</Button>

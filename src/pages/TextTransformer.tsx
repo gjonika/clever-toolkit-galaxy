@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import PageLayout from "@/components/layout/PageLayout";
 
 interface TransformOption {
@@ -26,67 +26,57 @@ const transformOptions: TransformOption[] = [
 const TextTransformer = () => {
   const [inputText, setInputText] = useState<string>("");
   const [outputText, setOutputText] = useState<string>("");
-  const [selectedTransformations, setSelectedTransformations] = useState<string[]>([]);
+  const [selectedTransformation, setSelectedTransformation] = useState<string>("");
 
   const handleTransform = () => {
-    if (!inputText) return;
+    if (!inputText || !selectedTransformation) return;
 
     let transformed = inputText;
     
-    // Apply transformations in sequence
-    selectedTransformations.forEach((transformation) => {
-      switch (transformation) {
-        case "uppercase":
-          transformed = transformed.toUpperCase();
-          break;
-        case "lowercase":
-          transformed = transformed.toLowerCase();
-          break;
-        case "capitalize":
-          transformed = transformed
-            .split(" ")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
-          break;
-        case "trim":
-          transformed = transformed.trim();
-          break;
-        case "removeEmptyLines":
-          transformed = transformed
-            .split("\n")
-            .filter((line) => line.trim() !== "")
-            .join("\n");
-          break;
-        case "removeDuplicateLines": {
-          const lines = transformed.split("\n");
-          const uniqueLines = [...new Set(lines)];
-          transformed = uniqueLines.join("\n");
-          break;
-        }
-        case "sortLines": {
-          const lines = transformed.split("\n");
-          const sortedLines = [...lines].sort();
-          transformed = sortedLines.join("\n");
-          break;
-        }
-        case "reverseLines": {
-          const lines = transformed.split("\n");
-          const reversedLines = [...lines].reverse();
-          transformed = reversedLines.join("\n");
-          break;
-        }
+    // Apply transformation
+    switch (selectedTransformation) {
+      case "uppercase":
+        transformed = transformed.toUpperCase();
+        break;
+      case "lowercase":
+        transformed = transformed.toLowerCase();
+        break;
+      case "capitalize":
+        transformed = transformed
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+        break;
+      case "trim":
+        transformed = transformed.trim();
+        break;
+      case "removeEmptyLines":
+        transformed = transformed
+          .split("\n")
+          .filter((line) => line.trim() !== "")
+          .join("\n");
+        break;
+      case "removeDuplicateLines": {
+        const lines = transformed.split("\n");
+        const uniqueLines = [...new Set(lines)];
+        transformed = uniqueLines.join("\n");
+        break;
       }
-    });
+      case "sortLines": {
+        const lines = transformed.split("\n");
+        const sortedLines = [...lines].sort();
+        transformed = sortedLines.join("\n");
+        break;
+      }
+      case "reverseLines": {
+        const lines = transformed.split("\n");
+        const reversedLines = [...lines].reverse();
+        transformed = reversedLines.join("\n");
+        break;
+      }
+    }
 
     setOutputText(transformed);
-  };
-
-  const handleCheckboxChange = (transformation: string) => {
-    setSelectedTransformations((prev) =>
-      prev.includes(transformation)
-        ? prev.filter((t) => t !== transformation)
-        : [...prev, transformation]
-    );
   };
 
   const handleCopyToClipboard = () => {
@@ -97,12 +87,12 @@ const TextTransformer = () => {
   return (
     <PageLayout
       title="Text Transformer"
-      description="Apply multiple transformations to your text"
+      description="Apply transformations to your text"
       className="max-w-3xl mx-auto"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm p-6">
+          <div className="digital-card p-6">
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="input-text">Input Text</Label>
@@ -119,7 +109,8 @@ const TextTransformer = () => {
               <div className="flex justify-between">
                 <Button
                   onClick={handleTransform}
-                  disabled={!inputText || selectedTransformations.length === 0}
+                  disabled={!inputText || !selectedTransformation}
+                  className="bg-primary/90 hover:bg-primary"
                 >
                   Transform
                 </Button>
@@ -128,7 +119,7 @@ const TextTransformer = () => {
                   onClick={() => {
                     setInputText("");
                     setOutputText("");
-                    setSelectedTransformations([]);
+                    setSelectedTransformation("");
                   }}
                 >
                   Clear All
@@ -159,34 +150,34 @@ const TextTransformer = () => {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm p-6">
+        <div className="digital-card p-6">
           <h3 className="text-lg font-medium mb-4">Transformations</h3>
           <div className="space-y-4">
-            {transformOptions.map((option) => (
-              <div key={option.id} className="flex items-start space-x-2">
-                <Checkbox
-                  id={option.id}
-                  checked={selectedTransformations.includes(option.id)}
-                  onCheckedChange={() => handleCheckboxChange(option.id)}
-                />
-                <div className="grid gap-1.5">
-                  <Label
-                    htmlFor={option.id}
-                    className="text-sm font-medium leading-none cursor-pointer"
-                  >
-                    {option.label}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {option.description}
-                  </p>
+            <RadioGroup value={selectedTransformation} onValueChange={setSelectedTransformation}>
+              {transformOptions.map((option) => (
+                <div key={option.id} className="flex items-start space-x-2">
+                  <div className="flex items-center h-5">
+                    <RadioGroupItem value={option.id} id={option.id} />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <Label
+                      htmlFor={option.id}
+                      className="text-sm font-medium leading-none cursor-pointer"
+                    >
+                      {option.label}
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      {option.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </RadioGroup>
           </div>
         </div>
       </div>
       
-      <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl border p-6">
+      <div className="mt-8 digital-card p-6">
         <h3 className="mb-4">Common Use Cases</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">

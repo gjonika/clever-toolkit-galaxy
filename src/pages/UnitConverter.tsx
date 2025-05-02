@@ -1,4 +1,3 @@
-
 import { useState, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageLayout from "@/components/layout/PageLayout";
 
-type UnitCategory = "length" | "weight" | "temperature" | "currency";
+type UnitCategory = "length" | "weight" | "temperature" | "currency" | "area" | "volume";
 
 type ConversionResult = {
   value: number;
@@ -35,7 +34,7 @@ const UnitConverter = () => {
     let convertedValue = 0;
     let conversionMessage = "";
 
-    // Demo conversion logic - in a real app, you would have a comprehensive conversion system
+    // Conversion logic
     if (category === "length") {
       if (sourceUnit === "m" && targetUnit === "km") {
         convertedValue = numValue / 1000;
@@ -45,6 +44,46 @@ const UnitConverter = () => {
         convertedValue = numValue * 100;
       } else if (sourceUnit === "cm" && targetUnit === "m") {
         convertedValue = numValue / 100;
+      } else {
+        convertedValue = numValue; // Same unit
+      }
+    } else if (category === "area") {
+      if (sourceUnit === "m2" && targetUnit === "cm2") {
+        convertedValue = numValue * 10000;
+      } else if (sourceUnit === "cm2" && targetUnit === "m2") {
+        convertedValue = numValue / 10000;
+      } else if (sourceUnit === "m2" && targetUnit === "mm2") {
+        convertedValue = numValue * 1000000;
+      } else if (sourceUnit === "mm2" && targetUnit === "m2") {
+        convertedValue = numValue / 1000000;
+      } else if (sourceUnit === "km2" && targetUnit === "m2") {
+        convertedValue = numValue * 1000000;
+      } else if (sourceUnit === "m2" && targetUnit === "km2") {
+        convertedValue = numValue / 1000000;
+      } else if (sourceUnit === "ft2" && targetUnit === "m2") {
+        convertedValue = numValue * 0.092903;
+      } else if (sourceUnit === "m2" && targetUnit === "ft2") {
+        convertedValue = numValue / 0.092903;
+      } else {
+        convertedValue = numValue; // Same unit
+      }
+    } else if (category === "volume") {
+      if (sourceUnit === "m3" && targetUnit === "cm3") {
+        convertedValue = numValue * 1000000;
+      } else if (sourceUnit === "cm3" && targetUnit === "m3") {
+        convertedValue = numValue / 1000000;
+      } else if (sourceUnit === "m3" && targetUnit === "mm3") {
+        convertedValue = numValue * 1000000000;
+      } else if (sourceUnit === "mm3" && targetUnit === "m3") {
+        convertedValue = numValue / 1000000000;
+      } else if (sourceUnit === "L" && targetUnit === "m3") {
+        convertedValue = numValue / 1000;
+      } else if (sourceUnit === "m3" && targetUnit === "L") {
+        convertedValue = numValue * 1000;
+      } else if (sourceUnit === "gal" && targetUnit === "L") {
+        convertedValue = numValue * 3.78541;
+      } else if (sourceUnit === "L" && targetUnit === "gal") {
+        convertedValue = numValue / 3.78541;
       } else {
         convertedValue = numValue; // Same unit
       }
@@ -102,6 +141,10 @@ const UnitConverter = () => {
     switch (cat) {
       case "length":
         return ["m", "km", "cm", "mm", "ft", "in"];
+      case "area":
+        return ["m2", "cm2", "mm2", "km2", "ft2", "in2"];
+      case "volume":
+        return ["m3", "cm3", "mm3", "L", "mL", "gal"];
       case "weight":
         return ["kg", "g", "lb", "oz"];
       case "temperature":
@@ -119,16 +162,22 @@ const UnitConverter = () => {
       description="Convert values between different units of measurement"
       className="max-w-2xl mx-auto"
     >
-      <div className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm p-6">
-        <Tabs defaultValue="length" onValueChange={(val) => setCategory(val as UnitCategory)}>
-          <TabsList className="grid grid-cols-4 mb-6">
+      <div className="digital-card p-6">
+        <Tabs defaultValue="length" onValueChange={(val) => {
+          setCategory(val as UnitCategory);
+          setSourceUnit(getCategoryUnits(val as UnitCategory)[0]);
+          setTargetUnit(getCategoryUnits(val as UnitCategory)[1]);
+        }}>
+          <TabsList className="grid grid-cols-6 mb-6">
             <TabsTrigger value="length">Length</TabsTrigger>
+            <TabsTrigger value="area">Area</TabsTrigger>
+            <TabsTrigger value="volume">Volume</TabsTrigger>
             <TabsTrigger value="weight">Weight</TabsTrigger>
-            <TabsTrigger value="temperature">Temperature</TabsTrigger>
+            <TabsTrigger value="temperature">Temp</TabsTrigger>
             <TabsTrigger value="currency">Currency</TabsTrigger>
           </TabsList>
           
-          {["length", "weight", "temperature", "currency"].map((cat) => (
+          {["length", "area", "volume", "weight", "temperature", "currency"].map((cat) => (
             <TabsContent key={cat} value={cat} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -193,6 +242,7 @@ const UnitConverter = () => {
                   size="lg"
                   onClick={handleConvert}
                   disabled={!value || isNaN(Number(value))}
+                  className="bg-primary/90 hover:bg-primary"
                 >
                   Convert
                 </Button>
@@ -211,9 +261,9 @@ const UnitConverter = () => {
         </Tabs>
       </div>
       
-      <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl border p-6">
+      <div className="mt-8 digital-card p-6">
         <h3 className="mb-4">Common Conversions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <h4>Length</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
@@ -224,12 +274,21 @@ const UnitConverter = () => {
             </ul>
           </div>
           <div className="space-y-2">
-            <h4>Weight</h4>
+            <h4>Area</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>1 kilogram = 1000 grams</li>
-              <li>1 kilogram = 2.20462 pounds</li>
-              <li>1 pound = 16 ounces</li>
-              <li>1 metric ton = 1000 kilograms</li>
+              <li>1 m² = 10,000 cm²</li>
+              <li>1 m² = 1,000,000 mm²</li>
+              <li>1 km² = 1,000,000 m²</li>
+              <li>1 ft² = 0.092903 m²</li>
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <h4>Volume</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>1 m³ = 1,000,000 cm³</li>
+              <li>1 m³ = 1,000 liters</li>
+              <li>1 liter = 0.001 m³</li>
+              <li>1 gallon = 3.78541 liters</li>
             </ul>
           </div>
         </div>

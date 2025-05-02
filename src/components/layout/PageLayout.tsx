@@ -17,13 +17,14 @@ const PageLayout = ({
   className = "",
 }: PageLayoutProps) => {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
       
-      <main className="flex-1">
-        <div className="container py-8 md:py-12">
+      <main className="flex-1 relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none"></div>
+        <div className="container py-8 md:py-12 relative">
           <div className="mb-8 md:mb-12">
-            <h1 className="mb-2">{title}</h1>
+            <h1 className="mb-2 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">{title}</h1>
             {description && (
               <p className="text-lg text-muted-foreground">{description}</p>
             )}
