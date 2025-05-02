@@ -4,22 +4,31 @@ import { MapPin, ThermometerSun, Wind, Droplets } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import WeatherForecast from "@/components/weather/WeatherForecast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type WeatherData = {
   location: string;
   temperature: number;
+  feelsLike: number;
   condition: string;
   humidity: number;
   windSpeed: number;
+  hourlyForecast: Array<{
+    hour: string;
+    temperature: number;
+    condition: string;
+  }>;
 };
 
 const WeatherWidget = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState("");
+  const { t } = useLanguage();
 
   useEffect(() => {
-    fetchWeatherData();
+    fetchWeatherData("Klaipėda"); // Default to Klaipėda
   }, []);
 
   const fetchWeatherData = (cityName?: string) => {
@@ -29,37 +38,35 @@ const WeatherWidget = () => {
     // In a real app, you would use a weather API
     setTimeout(() => {
       if (cityName) {
+        // Generate random hourly forecast data
+        const hourlyForecast = [];
+        const baseTemp = Math.floor(Math.random() * 20) + 5;
+        
+        for (let i = 0; i < 24; i++) {
+          const hour = i.toString().padStart(2, '0') + ':00';
+          // Create some variation in the temperature
+          const variation = Math.random() * 6 - 3;
+          const hourTemp = Math.round((baseTemp + variation) * 10) / 10;
+          
+          hourlyForecast.push({
+            hour,
+            temperature: hourTemp,
+            condition: ["Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"][Math.floor(Math.random() * 5)]
+          });
+        }
+        
+        const temp = Math.floor(Math.random() * 30) + 5;
+        const feelsLike = temp + (Math.random() * 4 - 2); // feels like could be slightly different
+        
         setWeather({
           location: cityName,
-          temperature: Math.floor(Math.random() * 30) + 5,
+          temperature: temp,
+          feelsLike: Math.round(feelsLike * 10) / 10,
           condition: ["Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"][Math.floor(Math.random() * 5)],
           humidity: Math.floor(Math.random() * 60) + 30,
           windSpeed: Math.floor(Math.random() * 20) + 1,
+          hourlyForecast
         });
-      } else {
-        // Default to current location (mock data)
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            // In a real app, you'd use the coordinates to get the city name and weather
-            setWeather({
-              location: "Current Location",
-              temperature: Math.floor(Math.random() * 30) + 5,
-              condition: ["Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"][Math.floor(Math.random() * 5)],
-              humidity: Math.floor(Math.random() * 60) + 30,
-              windSpeed: Math.floor(Math.random() * 20) + 1,
-            });
-          },
-          () => {
-            // Fallback if geolocation fails
-            setWeather({
-              location: "New York",
-              temperature: Math.floor(Math.random() * 30) + 5,
-              condition: ["Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"][Math.floor(Math.random() * 5)],
-              humidity: Math.floor(Math.random() * 60) + 30,
-              windSpeed: Math.floor(Math.random() * 20) + 1,
-            });
-          }
-        );
       }
       setLoading(false);
     }, 1000);
@@ -103,16 +110,16 @@ const WeatherWidget = () => {
       <DialogContent className="sm:max-w-[425px]">
         <div className="space-y-4">
           <div className="text-center pb-2 border-b">
-            <h4 className="font-medium text-lg">Weather</h4>
+            <h4 className="font-medium text-lg">{t("weather")}</h4>
           </div>
           
           <form onSubmit={handleCitySearch} className="flex space-x-2">
             <Input 
-              placeholder="Enter city name" 
+              placeholder={t("enter-city-name")}
               value={city} 
               onChange={(e) => setCity(e.target.value)}
             />
-            <Button type="submit" size="sm">Search</Button>
+            <Button type="submit" size="sm">{t("search")}</Button>
           </form>
           
           <div className="rounded-lg p-4 bg-primary/5 border">
@@ -124,26 +131,37 @@ const WeatherWidget = () => {
               <div className="text-3xl font-bold">{weather.temperature}°C</div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="grid grid-cols-3 gap-4 mt-2">
+              <div className="flex items-center gap-2">
+                <ThermometerSun className="h-5 w-5 text-orange-500" />
+                <div>
+                  <div className="text-sm text-muted-foreground">{t("feels-like")}</div>
+                  <div className="font-medium">{weather.feelsLike}°C</div>
+                </div>
+              </div>
               <div className="flex items-center gap-2">
                 <Droplets className="h-5 w-5 text-blue-500" />
                 <div>
-                  <div className="text-sm text-muted-foreground">Humidity</div>
+                  <div className="text-sm text-muted-foreground">{t("humidity")}</div>
                   <div className="font-medium">{weather.humidity}%</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Wind className="h-5 w-5 text-blue-400" />
                 <div>
-                  <div className="text-sm text-muted-foreground">Wind</div>
+                  <div className="text-sm text-muted-foreground">{t("wind")}</div>
                   <div className="font-medium">{weather.windSpeed} km/h</div>
                 </div>
               </div>
             </div>
           </div>
           
+          <div className="border rounded-lg p-4">
+            <WeatherForecast location={weather.location} hourlyData={weather.hourlyForecast} />
+          </div>
+          
           <div className="text-xs text-center text-muted-foreground">
-            Weather data last updated: {new Date().toLocaleTimeString()}
+            {new Date().toLocaleTimeString()}
           </div>
         </div>
       </DialogContent>

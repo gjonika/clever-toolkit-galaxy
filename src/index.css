@@ -5,39 +5,7 @@
 
 @layer base {
   :root {
-    --background: 215 28% 14%;
-    --foreground: 210 40% 98%;
-
-    --card: 215 30% 16%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 215 30% 16%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 215 25% 22%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 215 25% 22%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 215 25% 22%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 215 28% 30%;
-    --input: 215 28% 30%;
-    --ring: 221.2 83.2% 53.3%;
-
-    --radius: 0.5rem;
-  }
-
-  .light {
-    --background: 210 40% 96%;
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -66,6 +34,36 @@
     --ring: 221.2 83.2% 53.3%;
 
     --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 220 30% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 32% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 32% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 28% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 28% 18%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 220 28% 18%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 28% 25%;
+    --input: 220 28% 25%;
+    --ring: 221.2 83.2% 53.3%;
   }
 }
 
@@ -102,17 +100,7 @@
 
 @layer components {
   .tool-card {
-    @apply bg-card dark:bg-gray-800 rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300 p-6 flex flex-col justify-between relative overflow-hidden;
-  }
-
-  .tool-card::before {
-    content: '';
-    @apply absolute top-0 left-0 w-full h-full pointer-events-none;
-    background-image: 
-      linear-gradient(90deg, transparent 24px, var(--border-color) 25px, transparent 26px),
-      linear-gradient(180deg, transparent 24px, var(--border-color) 25px, transparent 26px);
-    background-size: 50px 50px;
-    opacity: 0.1;
+    @apply bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300 p-6 flex flex-col justify-between relative overflow-hidden digital-border;
   }
 
   .interactive-input {
@@ -139,13 +127,23 @@
     --border-color: theme('colors.tool.textTransformer');
   }
 
+  /* Digital border with grid lines */
   .digital-border {
     @apply border rounded-md relative overflow-hidden;
+    position: relative;
+  }
+  
+  .digital-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
     background-image: 
-      linear-gradient(90deg, var(--border-color) 1px, transparent 1px),
-      linear-gradient(180deg, var(--border-color) 1px, transparent 1px);
+      linear-gradient(90deg, var(--border, theme('colors.border')) 1px, transparent 1px),
+      linear-gradient(0deg, var(--border, theme('colors.border')) 1px, transparent 1px);
     background-size: 20px 20px;
-    background-position: -1px -1px;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
   }
   
   .digital-card {
@@ -153,8 +151,29 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
+  .digital-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(90deg, var(--border, theme('colors.border')) 1px, transparent 1px),
+      linear-gradient(0deg, var(--border, theme('colors.border')) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .digital-card::after {
     content: '';
     @apply absolute top-0 left-0 w-full h-1 bg-primary/30;
   }
+}
+
+/* Digital grid pattern for background */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
 }

@@ -1,37 +1,42 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "sonner";
 import PageLayout from "@/components/layout/PageLayout";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TransformOption {
   id: string;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
 }
 
 const transformOptions: TransformOption[] = [
-  { id: "uppercase", label: "Uppercase", description: "Convert text to uppercase" },
-  { id: "lowercase", label: "Lowercase", description: "Convert text to lowercase" },
-  { id: "capitalize", label: "Capitalize", description: "Capitalize first letter of each word" },
-  { id: "trim", label: "Trim", description: "Remove whitespace from beginning and end" },
-  { id: "removeEmptyLines", label: "Remove Empty Lines", description: "Remove blank lines" },
-  { id: "removeDuplicateLines", label: "Remove Duplicate Lines", description: "Remove duplicate lines" },
-  { id: "sortLines", label: "Sort Lines", description: "Sort lines alphabetically" },
-  { id: "reverseLines", label: "Reverse Lines", description: "Reverse the order of lines" },
+  { id: "uppercase", labelKey: "uppercase", descriptionKey: "Convert text to uppercase" },
+  { id: "lowercase", labelKey: "lowercase", descriptionKey: "Convert text to lowercase" },
+  { id: "capitalize", labelKey: "capitalize", descriptionKey: "Capitalize first letter of each word" },
+  { id: "trim", labelKey: "trim", descriptionKey: "Remove whitespace from beginning and end" },
+  { id: "removeEmptyLines", labelKey: "remove-empty-lines", descriptionKey: "Remove blank lines" },
+  { id: "removeDuplicateLines", labelKey: "remove-duplicate-lines", descriptionKey: "Remove duplicate lines" },
+  { id: "sortLines", labelKey: "sort-lines", descriptionKey: "Sort lines alphabetically" },
+  { id: "reverseLines", labelKey: "reverse-lines", descriptionKey: "Reverse the order of lines" },
 ];
 
 const TextTransformer = () => {
   const [inputText, setInputText] = useState<string>("");
   const [outputText, setOutputText] = useState<string>("");
   const [selectedTransformation, setSelectedTransformation] = useState<string>("");
+  const { t } = useLanguage();
 
-  const handleTransform = () => {
+  const handleTransform = useCallback(() => {
     if (!inputText || !selectedTransformation) return;
 
-    let transformed = inputText;
+    // Get the text to transform - either the output text (if it exists) or the input text
+    let textToTransform = outputText || inputText;
+    let transformed = textToTransform;
     
     // Apply transformation
     switch (selectedTransformation) {
@@ -77,16 +82,16 @@ const TextTransformer = () => {
     }
 
     setOutputText(transformed);
-  };
+  }, [inputText, outputText, selectedTransformation]);
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(outputText);
-    // In a real app, show a toast notification here
+    toast.success("Copied to clipboard!");
   };
 
   return (
     <PageLayout
-      title="Text Transformer"
+      title={t("text-transformer")}
       description="Apply transformations to your text"
       className="max-w-3xl mx-auto"
     >
@@ -95,13 +100,19 @@ const TextTransformer = () => {
           <div className="digital-card p-6">
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="input-text">Input Text</Label>
+                <Label htmlFor="input-text">{t("input-text")}</Label>
                 <Textarea
                   id="input-text"
                   placeholder="Enter text to transform"
                   rows={10}
                   value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+                  onChange={(e) => {
+                    setInputText(e.target.value);
+                    // Reset output when input changes
+                    if (outputText) {
+                      setOutputText("");
+                    }
+                  }}
                   className="font-mono text-sm interactive-input"
                 />
               </div>
@@ -112,7 +123,7 @@ const TextTransformer = () => {
                   disabled={!inputText || !selectedTransformation}
                   className="bg-primary/90 hover:bg-primary"
                 >
-                  Transform
+                  {t("transform")}
                 </Button>
                 <Button
                   variant="outline"
@@ -122,20 +133,20 @@ const TextTransformer = () => {
                     setSelectedTransformation("");
                   }}
                 >
-                  Clear All
+                  {t("clear-all")}
                 </Button>
               </div>
               
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="output-text">Output Text</Label>
+                  <Label htmlFor="output-text">{t("output-text")}</Label>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleCopyToClipboard}
                     disabled={!outputText}
                   >
-                    Copy to Clipboard
+                    {t("copy-to-clipboard")}
                   </Button>
                 </div>
                 <Textarea
@@ -151,7 +162,7 @@ const TextTransformer = () => {
         </div>
         
         <div className="digital-card p-6">
-          <h3 className="text-lg font-medium mb-4">Transformations</h3>
+          <h3 className="text-lg font-medium mb-4">{t("transformations")}</h3>
           <div className="space-y-4">
             <RadioGroup value={selectedTransformation} onValueChange={setSelectedTransformation}>
               {transformOptions.map((option) => (
@@ -164,10 +175,10 @@ const TextTransformer = () => {
                       htmlFor={option.id}
                       className="text-sm font-medium leading-none cursor-pointer"
                     >
-                      {option.label}
+                      {t(option.labelKey)}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      {option.description}
+                      {option.descriptionKey}
                     </p>
                   </div>
                 </div>
@@ -178,10 +189,10 @@ const TextTransformer = () => {
       </div>
       
       <div className="mt-8 digital-card p-6">
-        <h3 className="mb-4">Common Use Cases</h3>
+        <h3 className="mb-4">{t("common-use-cases")}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <h4>Text Formatting</h4>
+            <h4>{t("text-formatting")}</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>Clean up data from spreadsheets</li>
               <li>Format code snippets</li>
@@ -189,7 +200,7 @@ const TextTransformer = () => {
             </ul>
           </div>
           <div className="space-y-2">
-            <h4>Data Processing</h4>
+            <h4>{t("data-processing")}</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>Clean CSV data</li>
               <li>Prepare data for import</li>
