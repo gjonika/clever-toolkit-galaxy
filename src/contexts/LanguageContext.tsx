@@ -1,90 +1,111 @@
-
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type Language = "EN" | "LT";
 
-interface LanguageContextType {
-  language: Language;
-  translations: Record<string, string>;
-  setLanguage: (language: Language) => void;
-  t: (key: string) => string;
+// Translation object type
+interface Translations {
+  [key: string]: {
+    EN: string;
+    LT: string;
+  };
 }
 
-// Basic translations for demonstration
-const translations = {
-  EN: {
-    "unit-converter": "Unit Converter",
-    "color-extractor": "Color Extractor",
-    "date-calculator": "Date/Time Calculator",
-    "text-transformer": "Text Transformer",
-    "developer-utilities": "Developer Utilities",
-    "weather": "Weather",
-    "convert": "Convert",
-    "calculate": "Calculate",
-    "transform": "Transform",
-    "extract": "Extract",
-    "github": "GitHub",
-    "input-text": "Input Text",
-    "output-text": "Output Text",
-    "clear-all": "Clear All",
-    "copy-to-clipboard": "Copy to Clipboard",
-    "transformations": "Transformations",
-    "uppercase": "Uppercase",
-    "lowercase": "Lowercase",
-    "capitalize": "Capitalize",
-    "trim": "Trim",
-    "remove-empty-lines": "Remove Empty Lines",
-    "remove-duplicate-lines": "Remove Duplicate Lines",
-    "sort-lines": "Sort Lines",
-    "reverse-lines": "Reverse Lines",
-    "common-use-cases": "Common Use Cases",
-    "text-formatting": "Text Formatting",
-    "data-processing": "Data Processing",
-    "feels-like": "Feels like",
-    "humidity": "Humidity",
-    "wind": "Wind",
-    "search": "Search",
-    "enter-city-name": "Enter city name",
-    "hourly-forecast": "Hourly Forecast",
-    "temp": "Temp"
+// Define translations
+const translations: Translations = {
+  "developer-utilities": {
+    EN: "Developer Utilities",
+    LT: "Programuotojų Įrankiai"
   },
-  LT: {
-    "unit-converter": "Matavimo vienetų keitiklis",
-    "color-extractor": "Spalvų išrinkimas",
-    "date-calculator": "Datos/laiko skaičiuoklė",
-    "text-transformer": "Teksto transformavimas",
-    "developer-utilities": "Programuotojų įrankiai",
-    "weather": "Orai",
-    "convert": "Konvertuoti",
-    "calculate": "Apskaičiuoti",
-    "transform": "Transformuoti",
-    "extract": "Išrinkti",
-    "github": "GitHub",
-    "input-text": "Įvesties tekstas",
-    "output-text": "Rezultato tekstas",
-    "clear-all": "Išvalyti viską",
-    "copy-to-clipboard": "Kopijuoti į iškarpinę",
-    "transformations": "Transformacijos",
-    "uppercase": "Didžiosios raidės",
-    "lowercase": "Mažosios raidės",
-    "capitalize": "Pirmoji didžioji",
-    "trim": "Apkarpyti tarpus",
-    "remove-empty-lines": "Pašalinti tuščias eilutes",
-    "remove-duplicate-lines": "Pašalinti pasikartojančias eilutes",
-    "sort-lines": "Rikiuoti eilutes",
-    "reverse-lines": "Apversti eilutes",
-    "common-use-cases": "Dažni naudojimo atvejai",
-    "text-formatting": "Teksto formatavimas",
-    "data-processing": "Duomenų apdorojimas",
-    "feels-like": "Jaučiasi kaip",
-    "humidity": "Drėgmė",
-    "wind": "Vėjas",
-    "search": "Ieškoti",
-    "enter-city-name": "Įveskite miesto pavadinimą",
-    "hourly-forecast": "Valandinė prognozė",
-    "temp": "Temp."
-  }
+  "unit-converter": {
+    EN: "Unit Converter",
+    LT: "Matų Konverteris"
+  },
+  "color-extractor": {
+    EN: "Color Extractor",
+    LT: "Spalvų Ištraukimas"
+  },
+  "date-calculator": {
+    EN: "Date Calculator",
+    LT: "Datų Skaičiuoklė"
+  },
+  "text-transformer": {
+    EN: "Text Transformer",
+    LT: "Teksto Transformavimas"
+  },
+  "code-formatter": {
+    EN: "Code Formatter",
+    LT: "Kodo Formatavimas"
+  },
+  "file-converter": {
+    EN: "File Converter",
+    LT: "Failų Konverteris"
+  },
+  "time-zone": {
+    EN: "Time Zone",
+    LT: "Laiko Juostos"
+  },
+  "more-tools": {
+    EN: "More Tools",
+    LT: "Daugiau Įrankių"
+  },
+  "quick-tools": {
+    EN: "Quick Tools",
+    LT: "Greiti Įrankiai"
+  },
+  "all-tools": {
+    EN: "All Tools",
+    LT: "Visi Įrankiai"
+  },
+  "customize": {
+    EN: "Customize",
+    LT: "Pritaikyti"
+  },
+  "open-tool": {
+    EN: "Open Tool",
+    LT: "Atidaryti Įrankį"
+  },
+  "all-rights-reserved": {
+    EN: "All rights reserved.",
+    LT: "Visos teisės saugomos."
+  },
+  "releases": {
+    EN: "Releases",
+    LT: "Išleidimai"
+  },
+  "github": {
+    EN: "GitHub",
+    LT: "GitHub"
+  },
+  "input-text": "Input Text",
+  "output-text": "Output Text",
+  "clear-all": "Clear All",
+  "copy-to-clipboard": "Copy to Clipboard",
+  "transformations": "Transformations",
+  "uppercase": "Uppercase",
+  "lowercase": "Lowercase",
+  "capitalize": "Capitalize",
+  "trim": "Trim",
+  "remove-empty-lines": "Remove Empty Lines",
+  "remove-duplicate-lines": "Remove Duplicate Lines",
+  "sort-lines": "Sort Lines",
+  "reverse-lines": "Reverse Lines",
+  "common-use-cases": "Common Use Cases",
+  "text-formatting": "Text Formatting",
+  "data-processing": "Data Processing",
+  "feels-like": "Feels like",
+  "humidity": "Humidity",
+  "wind": "Wind",
+  "search": "Search",
+  "enter-city-name": "Enter city name",
+  "hourly-forecast": "Hourly Forecast",
+  "temp": "Temp."
 };
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -95,24 +116,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return savedLanguage || "EN";
   });
 
-  const t = (key: string): string => {
-    return translations[language][key] || key;
-  };
+  useEffect(() => {
+    // Update local storage when language changes
+    localStorage.setItem("language", language);
+  }, [language]);
 
-  const handleLanguageChange = (newLanguage: Language) => {
-    localStorage.setItem("language", newLanguage);
-    setLanguage(newLanguage);
+  // Translation function
+  const t = (key: string): string => {
+    if (!translations[key]) {
+      console.warn(`Translation key not found: ${key}`);
+      return key;
+    }
+    return translations[key][language];
   };
 
   return (
-    <LanguageContext.Provider 
-      value={{ 
-        language, 
-        translations: translations[language], 
-        setLanguage: handleLanguageChange,
-        t
-      }}
-    >
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

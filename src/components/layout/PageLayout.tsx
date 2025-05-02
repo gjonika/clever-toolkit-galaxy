@@ -22,8 +22,8 @@ const PageLayout = ({
       
       <main className="flex-1 relative">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none"></div>
-        <div className="container py-8 md:py-12 relative">
-          <div className="mb-8 md:mb-12">
+        <div className="container py-8 md:py-10 relative">
+          <div className="mb-8 md:mb-10">
             <h1 className="mb-2 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">{title}</h1>
             {description && (
               <p className="text-lg text-muted-foreground">{description}</p>

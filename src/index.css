@@ -103,6 +103,10 @@
     @apply bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300 p-6 flex flex-col justify-between relative overflow-hidden digital-border;
   }
 
+  .quick-tool-card {
+    @apply digital-card hover:shadow-md transition-all duration-300;
+  }
+
   .interactive-input {
     @apply focus:ring-2 focus:ring-primary/50 transition-all duration-200;
   }
@@ -168,6 +172,24 @@
     content: '';
     @apply absolute top-0 left-0 w-full h-1 bg-primary/30;
   }
+  
+  /* Digital button styles */
+  .digital-button {
+    @apply relative bg-card border border-border shadow-sm hover:shadow-md transition-all duration-300 rounded-md overflow-hidden;
+  }
+  
+  .digital-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(90deg, var(--border, theme('colors.border')) 1px, transparent 1px),
+      linear-gradient(0deg, var(--border, theme('colors.border')) 1px, transparent 1px);
+    background-size: 5px 5px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 /* Digital grid pattern for background */
@@ -176,4 +198,35 @@
     linear-gradient(to right, var(--border) 1px, transparent 1px),
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+/* Enhanced glass effect for cards */
+.glass-card {
+  @apply bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+/* New animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
 }

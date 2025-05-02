@@ -13,6 +13,7 @@ import DateCalculator from "./pages/DateCalculator";
 import TextTransformer from "./pages/TextTransformer";
 import NotFound from "./pages/NotFound";
 
+// Create a client
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/color-extractor" element={<ColorExtractor />} />
               <Route path="/date-calculator" element={<DateCalculator />} />
               <Route path="/text-transformer" element={<TextTransformer />} />
+              {/* Future tool routes can be added here */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
